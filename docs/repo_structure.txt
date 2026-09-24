@@ -1,0 +1,77 @@
+# Tracked/publishable file tree (git ls-files --cached --others --exclude-standard),
+# i.e. exactly what `git add .` would stage given the current .gitignore.
+# Regenerate with: git ls-files --cached --others --exclude-standard | sort
+
+enterprise-rag-assistant/
+├── backend/
+│   ├── Dockerfile
+│   ├── __init__.py
+│   ├── api.py
+│   ├── config.py
+│   ├── database.py
+│   ├── guardrails.py
+│   ├── model.py
+│   └── retriever.py
+├── data/
+│   ├── finetune/
+│   │   ├── test.jsonl
+│   │   ├── train.jsonl
+│   │   └── validation.jsonl
+│   └── __init__.py
+├── finetuning/
+│   ├── export_model.py
+│   └── train_qlora.py
+├── frontend-next/
+│   ├── app/
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── public/
+│   │   ├── file.svg
+│   │   ├── globe.svg
+│   │   ├── next.svg
+│   │   ├── vercel.svg
+│   │   └── window.svg
+│   ├── .gitignore
+│   ├── AGENTS.md
+│   ├── CLAUDE.md
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── eslint.config.mjs
+│   ├── next.config.ts
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.mjs
+│   └── tsconfig.json
+├── infrastructure/
+│   ├── docker-compose.yml
+│   ├── init.sql
+│   └── init_db.py
+├── ingestion/
+│   ├── __init__.py
+│   ├── build_bm25.py
+│   ├── chunking.py
+│   ├── embed_pinecone.py
+│   ├── extract_sql.py
+│   └── seed_documents.py
+├── tests/
+│   ├── test_build_bm25.py
+│   ├── test_data_preparation.py
+│   ├── test_evaluate.py
+│   ├── test_guardrails.py
+│   ├── test_ingestion.py
+│   └── test_model.py
+├── .env.example
+├── .gitignore
+├── CLAUDE.md
+├── README.md
+├── STATUS.md
+├── check_hf_dataset.py
+├── docker-compose.prod.yml
+├── enterprise_rag_finetune.jsonl
+├── evaluate_model.py
+├── planning.md
+├── prepare_data.py
+├── requirements.txt
+└── test_phase6.py

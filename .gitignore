@@ -1,0 +1,26 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+outputs/
+evaluation_results.csv
+.pytest_cache/
+
+# Downloaded/cached model weights (BGE embeddings, BGE reranker, base Qwen,
+# plus the pickled BM25 index) - multi-hundred-MB, regenerated locally by
+# HuggingFace's cache and ingestion/build_bm25.py, never meant for git.
+model_cache/
+
+# RLHF thumbs-up/down feedback log appended to at runtime by POST /feedback -
+# real user-interaction data, not source, and grows unbounded.
+feedback.jsonl
+
+# Local run logs/state from iterative dev sessions (uvicorn/streamlit/
+# ingestion stdout+stderr redirects, the ingestion resume checkpoint, and
+# ad-hoc curl response dumps used while testing) - never meant for git.
+*.log
+*.err
+checkpoint.json
+query_response.json
+hybrid_test_response.json
+hybrid_test2.json

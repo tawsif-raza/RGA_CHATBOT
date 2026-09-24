@@ -1,0 +1,88 @@
+# Production-ish Docker Compose stack for the Enterprise RAG backend,
+# frontend, and Phoenix observability. MSSQL is intentionally not defined
+# here - it's provisioned separately by infrastructure/docker-compose.yml
+# and reached from these containers via host.docker.internal.
+#
+# NOT started as part of scaffolding this file - validate only with:
+#   docker compose -f docker-compose.prod.yml config
+services:
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # .env's values are written for local (host) execution and don't
+      # resolve correctly from inside a container - these three overrides
+      # replace them for the containerized topology:
+      # - MSSQL runs on the host machine (via infrastructure/docker-compose.yml,
+      #   with its port published to the host), reached through Docker
+      #   Desktop's host.docker.internal rather than "localhost".
+      # - Phoenix is the sibling `phoenix` service below, not an embedded
+      #   in-process server (see backend/api.py's _ensure_observability()).
+      MSSQL_HOST: host.docker.internal
+      PHOENIX_COLLECTOR_ENDPOINT: http://phoenix:6006/v1/traces
+    volumes:
+      # Hugging Face model cache (BGE embeddings + reranker + base Qwen
+      # weights, plus the pickled BM25 index from ingestion/build_bm25.py),
+      # so they aren't re-downloaded/rebuilt on every container restart.
+      # Real bug fixed here: this previously read "./models_cache" (with an
+      # s) - a directory that has never existed on this host, since every
+      # script in this project (HF_HOME above, ingestion/build_bm25.py,
+      # backend/retriever.py's BM25_INDEX_PATH) uses "model_cache" (no s).
+      # The mount would have silently created an empty "models_cache" folder
+      # and mounted that instead - the container would re-download every
+      # model on each restart and never find the BM25 index.
+      - ./model_cache:/app/model_cache
+      # The fine-tuned QLoRA adapter (outputs/qlora on the host, produced by
+      # finetuning/train_qlora.py) - without this mount, backend.model's
+      # EnterpriseGenerator.load() silently no-ops (adapter path missing)
+      # and every /query would 503.
+      - ./outputs/qlora:/app/outputs/qlora
+    deploy:
+      resources:
+        reservations:
+          devices:
+            # GPU passthrough: requires the NVIDIA Container Toolkit on the
+            # host. Without this reservation, torch.cuda.is_available() is
+            # False inside the container even on a GPU host, and generation
+            # silently no-ops the same way a missing adapter mount does.
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - enterprise-rag-net
+    depends_on:
+      - phoenix
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend-next/Dockerfile
+    ports:
+      - "3000:3000"
+    # No API_BASE_URL override here (unlike the old Streamlit `web` service):
+    # frontend-next/app/page.tsx is a client component, so its fetch to the
+    # API runs in the user's browser, not inside this container - it must
+    # reach the api service via the host's published localhost:8000, the
+    # same address it already uses in local dev, not the api container's
+    # internal-only service-name DNS.
+    networks:
+      - enterprise-rag-net
+    depends_on:
+      - api
+
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    ports:
+      - "6006:6006" # UI + OTLP HTTP collector
+      - "4317:4317" # OTLP gRPC collector
+    networks:
+      - enterprise-rag-net
+
+networks:
+  enterprise-rag-net:
+    driver: bridge

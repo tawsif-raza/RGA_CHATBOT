@@ -1,35 +1,35 @@
-# Project Plan: Jargon-Aware Enterprise RAG
+# Enterprise RAG v1 Implementation Plan
 
-## 1. Project Objective
-Build a production-grade Retrieval-Augmented Generation (RAG) system that connects structured corporate data and messy internal documentation to a fine-tuned, domain-specific language model. The system will synthesize jargon-heavy internal records (from the `EnterpriseRAG-Bench` dataset) into clear, accurate answers.
+## Objective
 
-## 2. System Architecture
-*   **Database (Structured Metadata):** Microsoft SQL Server running in a Docker container on an AWS EC2 instance.
-*   **Vector Database (Unstructured Data):** Pinecone index for storing semantic embeddings of chunked enterprise documents.
-*   **Orchestration & Retrieval:** FastAPI backend utilizing LangChain to route queries, embed text, and fetch context.
-*   **Generation Engine:** A Qwen2.5-0.5B-Instruct model, fine-tuned using QLoRA and TRL SFTTrainer, deployed locally to synthesize retrieved documents.
-*   **User Interface:** Streamlit web application for querying and visualizing the retrieved context alongside the model's answer.
+Build a local enterprise RAG system for English documents. Streamlit calls a FastAPI service, which retrieves BGE-small embeddings from Pinecone, enriches them with MSSQL metadata, and generates a cited answer through a locally loaded Qwen QLoRA adapter.
 
-## 3. Directory Structure
-```text
-enterprise-rag-project/
-├── backend/
-│   ├── api.py               # FastAPI application and endpoints
-│   ├── retriever.py         # LangChain and Pinecone connection logic
-│   └── requirements.txt
-├── data/
-│   ├── prepare_data.py      # Script to download/merge EnterpriseRAG-Bench
-│   └── enterprise_rag_finetune.jsonl # Formatted data for fine-tuning
-├── finetuning/
-│   ├── train_qlora.py       # TRL SFTTrainer and PEFT configuration
-│   └── export_model.py      # Script to merge LoRA weights and export
-├── frontend/
-│   ├── app.py               # Streamlit chat interface
-│   └── requirements.txt
-├── infrastructure/
-│   ├── docker-compose.yml   # MSSQL Server configuration
-│   └── init.sql             # SQL schema definitions for metadata
-└── ingestion/
-    ├── extract_sql.py       # Pulls metadata from MSSQL
-    └── embed_pinecone.py    # Chunks text and pushes vectors to Pinecone
-    
+## Runtime and Dependencies
+
+- Target Python 3.11+ on Linux with NVIDIA CUDA; Windows is development-only.
+- Use one root `requirements.txt`; install Microsoft ODBC Driver 18 separately on API and ingestion hosts.
+- Put all credentials in environment variables. `.env.example` documents the values; no secret is committed.
+- Use `BAAI/bge-small-en-v1.5`, normalized vectors, cosine similarity, and a 384-dimensional Pinecone index.
+
+## Data and Model Workflow
+
+1. `prepare_data.py` downloads EnterpriseRAG-Bench, creates one Qwen chat example per valid primary document, and deterministically groups source documents into 80/10/10 train/validation/test splits.
+2. `finetuning/train_qlora.py` trains Qwen2.5-0.5B-Instruct with NF4 QLoRA, validates on the held-out validation split, and saves adapters under `outputs/qlora`.
+3. `finetuning/export_model.py` optionally merges the adapter only for a standalone deployment artifact.
+4. `evaluate_model.py` runs only against the held-out test split using real Pinecone retrieval. OpenAI judging is optional; local metrics always run.
+
+## Retrieval and Serving Workflow
+
+1. `infrastructure/init.sql` defines document metadata and idempotent ingestion state.
+2. `ingestion/extract_sql.py` reads enabled source records from MSSQL.
+3. `ingestion/embed_pinecone.py` chunks source content, hashes it, skips unchanged content, and upserts vectors plus required metadata.
+4. FastAPI loads the model once at startup. `POST /query` retrieves up to four chunks, applies optional department/role filters, constructs one token-budgeted Qwen chat prompt, and returns the answer and citations.
+5. `GET /health` reports API, model, MSSQL, and Pinecone readiness without revealing credentials. The Streamlit UI shows responses and sources.
+
+## Quality Gates
+
+- Do not train on or evaluate against overlapping source document IDs.
+- Train, evaluate, and serve with the same tokenizer chat-template contract.
+- Return an explicit insufficient-context answer if retrieval returns no usable context.
+- Test splitting, chunk metadata, idempotent ingestion, API validation, no-context behavior, citations, and prompt construction with `pytest`.
+- Update `STATUS.md` after each completed milestone with a timestamp, command, and concise result.
