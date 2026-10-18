@@ -6,6 +6,10 @@ retrieval, cross-encoder reranking, a fine-tuned local LLM, and full
 observability into a single FastAPI service, fronted by a streaming Next.js
 chat UI.
 
+[![CI](https://github.com/tawsif-raza/RGA_CHATBOT/actions/workflows/ci.yml/badge.svg)](https://github.com/tawsif-raza/RGA_CHATBOT/actions/workflows/ci.yml)
+
+<img src="docs/assets/pipeline.svg" alt="Query path: guardrails, dense Pinecone retrieval and BM25 keyword retrieval, weighted reciprocal rank fusion, cross-encoder rerank, QLoRA-tuned Qwen generation, streamed cited answer" width="100%">
+
 > Built as a portfolio-grade demonstration of a production-shaped RAG stack:
 > real ingestion pipelines, real evaluation, real guardrails, and real
 > containerization - not a notebook demo.
@@ -255,12 +259,15 @@ streaming format:
 - `evaluate_model.py` measures Context Recall@k and a lexical-overlap
   faithfulness heuristic against a held-out test split with zero overlap
   against training documents.
-- No mocked database or vector-store connections anywhere in the codebase -
-  every script and test runs against a real Dockerized MSSQL instance and
-  the real Pinecone API.
-- `pytest` covers data splitting, chunk metadata, idempotent ingestion, API
-  validation, no-context behavior, citation construction, and guardrail
-  behavior.
+- No mocked database or vector-store connections: ingestion, evaluation and
+  the live-stack check (`scripts/verify_live_stack.py`) run against a real
+  Dockerized MSSQL instance and the real Pinecone API.
+- The `pytest` suite (`python -m pytest tests`) covers data splitting, chunk
+  metadata, idempotent-ingestion checkpointing, no-context behavior, citation
+  construction, and guardrail behavior. These are pure-logic unit tests: they
+  need no MSSQL, Pinecone, GPU or API keys.
+- [CI](.github/workflows/ci.yml) runs that suite plus the frontend's lint,
+  type-check and production build on every push and pull request.
 
 ## Repository Layout
 
@@ -275,5 +282,6 @@ finetuning/     QLoRA training (PEFT/TRL)
 infrastructure/ MSSQL Docker Compose + schema
 data/           Deterministic train/validation/test splits
 tests/          pytest suite
+scripts/        manual checks (live-stack verification, dataset inspection)
 docker-compose.prod.yml   API + web + Phoenix stack
 ```
