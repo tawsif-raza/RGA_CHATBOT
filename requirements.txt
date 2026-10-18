@@ -5,7 +5,10 @@ langchain
 langchain-classic
 langchain-community
 langchain-text-splitters
-langchain-pinecone
+# Floor required: with no lower bound, resolvers can backtrack to
+# langchain-pinecone 0.0.1, which caps numpy<2 and breaks pyarrow (and
+# with it the Phoenix import) at test collection time.
+langchain-pinecone>=0.2.8
 langchain-huggingface
 pinecone
 sentence-transformers
@@ -18,12 +21,15 @@ trl[peft]
 bitsandbytes
 datasets
 pandas
+numpy>=2
 rank_bm25
 tqdm
 sqlalchemy
 pyodbc
 langchain-openai
-arize-phoenix
+# Floor required: older Phoenix releases pull a strawberry-graphql that is
+# incompatible with graphql-core 3.3 (ImportError: ExecutionContext).
+arize-phoenix>=20.0
 opentelemetry-instrumentation-fastapi
 openinference-instrumentation-langchain
 pytest

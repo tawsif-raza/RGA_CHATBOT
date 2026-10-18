@@ -1,4 +1,4 @@
-"""Temporary Phase 6 verification: reranked /query returns exactly 3 documents,
+"""Manual live-stack check (originally test_phase6.py): reranked /query returns exactly 3 documents,
 and the local Phoenix dashboard is reachable.
 
 Run against a live `uvicorn backend.api:app` instance.

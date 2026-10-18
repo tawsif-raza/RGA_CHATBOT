@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1042 132" width="1042" height="132" role="img" aria-labelledby="t d">
+<title id="t">RGA_CHATBOT · query path</title><desc id="d">A query passes guardrails, is retrieved by dense Pinecone search and BM25 in parallel, fused with reciprocal rank fusion, reranked by a cross-encoder, and answered by a QLoRA-tuned Qwen model with citations.</desc>
+<defs><marker id="a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2DD4BF"/></marker></defs>
+<rect width="1042" height="132" rx="12" fill="#0A0E13"/>
+<rect x="0.5" y="0.5" width="1041" height="131" rx="12" fill="none" stroke="#1F2A36"/>
+<text x="24" y="28" fill="#2DD4BF" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace" font-size="12" letter-spacing="1.5">RGA_CHATBOT · QUERY PATH</text>
+<rect x="24.0" y="46" width="91.8" height="62" rx="8" fill="#111821" fill-opacity="1" stroke="#1F2A36" stroke-width="1"/>
+<text x="69.9" y="73" fill="#E6EDF3" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" text-anchor="middle">Query</text>
+<text x="69.9" y="92" fill="#8B98A5" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace" font-size="11" text-anchor="middle">POST /query</text>
+<line x1="118.8" y1="77.0" x2="134.8" y2="77.0" stroke="#2DD4BF" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="137.8" y="46" width="128.7" height="62" rx="8" fill="#111821" fill-opacity="1" stroke="#1F2A36" stroke-width="1"/>
+<text x="202.1" y="73" fill="#E6EDF3" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" text-anchor="middle">Guardrails</text>
+<text x="202.1" y="92" fill="#8B98A5" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace" font-size="11" text-anchor="middle">injection · scope</text>
+<line x1="269.5" y1="77.0" x2="285.5" y2="77.0" stroke="#2DD4BF" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="288.5" y="46" width="73.3" height="62" rx="8" fill="#111821" fill-opacity="1" stroke="#1F2A36" stroke-width="1"/>
+<text x="325.1" y="73" fill="#E6EDF3" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" text-anchor="middle">Dense</text>
+<text x="325.1" y="92" fill="#8B98A5" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace" font-size="11" text-anchor="middle">Pinecone</text>
+<line x1="364.8" y1="77.0" x2="380.8" y2="77.0" stroke="#2DD4BF" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="383.8" y="46" width="75.0" height="62" rx="8" fill="#111821" fill-opacity="1" stroke="#1F2A36" stroke-width="1"/>
+<text x="421.2" y="73" fill="#E6EDF3" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" text-anchor="middle">Keyword</text>
+<text x="421.2" y="92" fill="#8B98A5" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace" font-size="11" text-anchor="middle">BM25</text>
+<line x1="461.7" y1="77.0" x2="477.7" y2="77.0" stroke="#2DD4BF" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="480.7" y="46" width="97.9" height="62" rx="8" fill="#0E7490" fill-opacity="0.35" stroke="#2DD4BF" stroke-width="1.5"/>
+<text x="529.7" y="73" fill="#E6EDF3" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" text-anchor="middle">Fusion</text>
+<text x="529.7" y="92" fill="#8B98A5" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace" font-size="11" text-anchor="middle">weighted RRF</text>
+<line x1="581.6" y1="77.0" x2="597.6" y2="77.0" stroke="#2DD4BF" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="600.6" y="46" width="134.9" height="62" rx="8" fill="#0E7490" fill-opacity="0.35" stroke="#2DD4BF" stroke-width="1.5"/>
+<text x="668.1" y="73" fill="#E6EDF3" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" text-anchor="middle">Rerank</text>
+<text x="668.1" y="92" fill="#8B98A5" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace" font-size="11" text-anchor="middle">cross-encoder 20→3</text>
+<line x1="738.5" y1="77.0" x2="754.5" y2="77.0" stroke="#2DD4BF" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="757.5" y="46" width="116.4" height="62" rx="8" fill="#111821" fill-opacity="1" stroke="#1F2A36" stroke-width="1"/>
+<text x="815.7" y="73" fill="#E6EDF3" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" text-anchor="middle">Generate</text>
+<text x="815.7" y="92" fill="#8B98A5" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace" font-size="11" text-anchor="middle">Qwen2.5 + QLoRA</text>
+<line x1="876.9" y1="77.0" x2="892.9" y2="77.0" stroke="#2DD4BF" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="895.9" y="46" width="122.6" height="62" rx="8" fill="#111821" fill-opacity="1" stroke="#1F2A36" stroke-width="1"/>
+<text x="957.2" y="73" fill="#E6EDF3" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" text-anchor="middle">Answer</text>
+<text x="957.2" y="92" fill="#8B98A5" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace" font-size="11" text-anchor="middle">streamed + cited</text>
+</svg>
