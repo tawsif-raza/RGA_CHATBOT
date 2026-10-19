@@ -3,6 +3,9 @@
 # Regenerate with: git ls-files --cached --others --exclude-standard | sort
 
 enterprise-rag-assistant/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── backend/
 │   ├── Dockerfile
 │   ├── __init__.py
@@ -18,6 +21,11 @@ enterprise-rag-assistant/
 │   │   ├── train.jsonl
 │   │   └── validation.jsonl
 │   └── __init__.py
+├── docs/
+│   ├── assets/
+│   │   └── pipeline.svg
+│   ├── EVALUATION.md
+│   └── repo_structure.txt
 ├── finetuning/
 │   ├── export_model.py
 │   └── train_qlora.py
@@ -55,6 +63,9 @@ enterprise-rag-assistant/
 │   ├── embed_pinecone.py
 │   ├── extract_sql.py
 │   └── seed_documents.py
+├── scripts/
+│   ├── inspect_jsonl_dataset.py
+│   └── verify_live_stack.py
 ├── tests/
 │   ├── test_build_bm25.py
 │   ├── test_data_preparation.py
@@ -67,11 +78,9 @@ enterprise-rag-assistant/
 ├── CLAUDE.md
 ├── README.md
 ├── STATUS.md
-├── check_hf_dataset.py
 ├── docker-compose.prod.yml
 ├── enterprise_rag_finetune.jsonl
 ├── evaluate_model.py
 ├── planning.md
 ├── prepare_data.py
-├── requirements.txt
-└── test_phase6.py
+└── requirements.txt

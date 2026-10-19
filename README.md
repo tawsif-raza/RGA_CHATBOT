@@ -91,12 +91,13 @@ token counts and latency.
   background-threaded `TextIteratorStreamer`; `backend/api.py` exposes it as
   a `StreamingResponse`, consumed live by the Next.js frontend's `useChat`
   hook with zero buffering/spinner-then-dump behavior.
-- **Hybrid search (dense + keyword, fused by RRF)** - dense-only retrieval
-  alone measured **8.5% Context Recall@3** against a held-out test split, a
-  real ceiling on 384-dimensional semantic similarity for internal jargon and
-  ticket IDs. Fusing a local BM25 index in via weighted Reciprocal Rank
-  Fusion lifted that to **12.8%** (~50% relative improvement) with no
-  measurable latency cost - see [Engineering Challenges](#engineering-challenges).
+- **Hybrid search (dense + keyword, fused by RRF)** - dense embeddings
+  blur exact identifiers such as ticket IDs; a local BM25 index fused via
+  weighted Reciprocal Rank Fusion recovers them. On the 47-question held-out
+  split, Context Recall@3 went from **8.5% (4/47) to 12.8% (6/47)** with no
+  measurable latency cost. Only ~9.8% of the corpus was indexed at the time,
+  which caps recall, and the gain is two questions, so read the conditions
+  in [docs/EVALUATION.md](docs/EVALUATION.md) before quoting it.
 - **Semantic guardrails** - a regex-based prompt-injection filter and an
   embedding-based out-of-domain router (cosine similarity against a small set
   of in-domain exemplar questions, calibrated against real measured
@@ -217,7 +218,11 @@ down to 3. Result: the ticket-ID query above now returns the correct
 document at rank 1 (rerank score 0.524 vs. 0.0005 for the next candidate),
 and the measured end-to-end **Context Recall@3 rose from 8.5% to 12.8%**
 with no measurable latency cost (the reranker/generation step still
-dominates total latency, not the added BM25 lookup).
+dominates total latency, not the added BM25 lookup). That aggregate change
+is 4/47 → 6/47 questions with overlapping confidence intervals, so the
+ticket-ID case above is the stronger evidence for the mechanism; the full
+setup, confidence intervals and limitations are in
+[docs/EVALUATION.md](docs/EVALUATION.md).
 
 ### Migrating streaming to Next.js meant reading the SDK's actual source, not its README
 
@@ -258,7 +263,8 @@ streaming format:
   before retrieval or generation.
 - `evaluate_model.py` measures Context Recall@k and a lexical-overlap
   faithfulness heuristic against a held-out test split with zero overlap
-  against training documents.
+  against training documents. Method, results and caveats:
+  [docs/EVALUATION.md](docs/EVALUATION.md).
 - No mocked database or vector-store connections: ingestion, evaluation and
   the live-stack check (`scripts/verify_live_stack.py`) run against a real
   Dockerized MSSQL instance and the real Pinecone API.
